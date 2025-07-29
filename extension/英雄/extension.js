@@ -8,8 +8,8 @@ export default function(){
 },help:{},config:{},package:{
     character: {
         character: {
-            "巴泽特": ["female","qun",4,["逆光","格斗","longdan"],["ext:英雄/巴泽特.jpg","die:ext:英雄/audio/die/巴泽特.mp3"]],
-            "一方通行": ["male","qun",4,["矢量"],["ext:英雄/一方通行.jpg","die:ext:英雄/audio/die/一方通行.mp3"]],
+            "巴泽特": ["female","qun",4,["逆光","格斗","longdan"],["ext:英雄/image/巴泽特.jpg","die:ext:英雄/audio/die/巴泽特.mp3"]],
+            "一方通行": ["male","qun",4,["矢量"],["ext:英雄/image/一方通行.jpg","die:ext:英雄/audio/die/一方通行.mp3"]],
         },
         translate: {
             "巴泽特": "巴泽特",
@@ -118,5 +118,5 @@ export default function(){
     diskURL: "",
     forumURL: "",
     version: "1.0",
-},files:{"character":["巴泽特.jpg","一方通行.jpg"],"card":[],"skill":[],"audio":[]},connect:false} 
+},files:{"character":["image/巴泽特.jpg","image/一方通行.jpg"],"card":[],"skill":[],"audio":[]},connect:false}
 };

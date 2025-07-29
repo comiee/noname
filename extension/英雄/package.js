@@ -4,6 +4,6 @@ extension["英雄"]={
 	netdisk:"",
 	forum:"",
 	version:"1.0",
-	files:["info.json","README.md","巴泽特.jpg","一方通行.jpg","LICENSE","LICENSE","package.js","一方通行.jpg","巴泽特.jpg"],
+	files:["info.json","README.md","LICENSE","LICENSE","package.js","一方通行.jpg","巴泽特.jpg"],
 	size:"714KB"
 };
