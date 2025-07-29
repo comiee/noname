@@ -1,4 +1,3 @@
-import {lib, game, ui, get, ai, _status} from "../../noname.js";
 import {skills} from "./skill.js";
 
 export const type = "extension";

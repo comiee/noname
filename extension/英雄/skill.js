@@ -1,3 +1,5 @@
+import {lib, game, ui, get, ai, _status} from "../../noname.js";  // 这一行不能同时在extension.js和此文件中同时存在，否则扩展会失效，原因未知 TODO 考虑到这行可能会自动生成，最好还是能放在extension.js里
+
 export const skills = {
 	skill: {
 		"逆光": {
