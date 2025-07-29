@@ -1,0 +1,9 @@
+extension["无敌"]={
+	intro:"",
+	author:"comiee",
+	netdisk:"",
+	forum:"",
+	version:"1.0",
+	files:["info.json","万人之上.jpg","一人之下.jpg","幻化无穷.jpg","以和为贵.jpg","绝处逢生.jpg","天下无敌.jpg","LICENSE","info.json","LICENSE","package.js","一人之下.jpg","万人之上.jpg","以和为贵.jpg","天下无敌.jpg","幻化无穷.jpg","绝处逢生.jpg"],
+	size:"1.4MB"
+};
