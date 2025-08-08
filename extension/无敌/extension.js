@@ -515,5 +515,5 @@ export default function(){
     diskURL: "",
     forumURL: "",
     version: "1.0",
-},files:{"character":["一人之下.jpg","幻化无穷.jpg","绝处逢生.jpg","万人之上.jpg","以和为贵.jpg","天下无敌.jpg"],"card":[],"skill":[],"audio":[]},connect:false} 
+},files:{"character":["一人之下.jpg","天下无敌.jpg","以和为贵.jpg","绝处逢生.jpg","万人之上.jpg","幻化无穷.jpg"],"card":[],"skill":[],"audio":[]},connect:false} 
 };
