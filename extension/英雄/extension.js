@@ -207,6 +207,7 @@ export default function () {
                         }
                     },
                     "月读": {
+						audio: "ext:英雄/月读",
                         enable: "phaseUse",
                         usable: 1,
                         filterTarget(card, player, target) { // 此效果意为需要选择目标，返回值为数组，传参为event.targets。
