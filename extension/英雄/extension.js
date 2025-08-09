@@ -1,207 +1,300 @@
-import { lib, game, ui, get, ai, _status } from "../../noname.js";
+import {lib, game, ui, get, ai, _status} from "../../noname.js";
+
 export const type = "extension";
-export default function(){
-	return {name:"英雄",content:function (config, pack) {
+export default function () {
+    return {
+        name: "英雄",
+        content: function (config, pack) {
 
-        },precontent:function () {
+        },
+        precontent: function () {
 
-        },help:{},config:{},package:{
-    character: {
-        character: {
-            "巴泽特": ["female","qun",4,["逆光","格斗","longdan"],["ext:英雄/巴泽特.jpg","die:ext:英雄/audio/die/巴泽特.mp3"]],
-            "一方通行": ["male","qun",4,["矢量"],["ext:英雄/一方通行.jpg","die:ext:英雄/audio/die/一方通行.mp3"]],
-            "宇智波鼬": {
-                sex: "male",
-                group: "qun",
-                hp: 3,
-                maxHp: 3,
-                hujia: 0,
-                skills: ["天照","火遁"],
-                img: "extension/英雄/宇智波鼬.jpg",
+        },
+        help: {},
+        config: {},
+        package: {
+            character: {
+                character: {
+                    "巴泽特": ["female", "qun", 4, ["逆光", "格斗", "longdan"], ["ext:英雄/巴泽特.jpg", "die:ext:英雄/audio/die/巴泽特.mp3"]],
+                    "一方通行": ["male", "qun", 4, ["矢量"], ["ext:英雄/一方通行.jpg", "die:ext:英雄/audio/die/一方通行.mp3"]],
+                    "宇智波鼬": {
+                        sex: "male",
+                        group: "qun",
+                        hp: 3,
+                        maxHp: 3,
+                        hujia: 0,
+                        skills: ["天照", "火遁", "月读"],
+                        img: "extension/英雄/宇智波鼬.jpg",
+                    },
+                },
+                translate: {
+                    "巴泽特": "巴泽特",
+                    "一方通行": "一方通行",
+                    "英雄": "英雄",
+                    "宇智波鼬": "宇智波鼬",
+                },
             },
-        },
-        translate: {
-            "巴泽特": "巴泽特",
-            "一方通行": "一方通行",
-            "英雄": "英雄",
-            "宇智波鼬": "宇智波鼬",
-        },
-    },
-    card: {
-        card: {
-        },
-        translate: {
-        },
-        list: [],
-    },
-    skill: {
-        skill: {
-            "逆光": {
-                forced: true,
-                trigger: {
-                    target: "shaBegin",
-                },
-                content: function () {
-                    'step 0'
-                    player.chooseToUse({name: trigger.card.name}, `逆光：是否对${get.translation(trigger.player)}使用一张${get.translation(trigger.card.name)}？`, trigger.player, -1).set('logSkill', '逆光');
-                    player.addTempSkill('逆光_used', 'shaEnd');
-                    player.temp = 0
-                    'step 1'
-                    if (player.temp) {
-                        trigger.cancel()
-                    }
-                },
-                subSkill: {
-                    used: {
-                        trigger: {
-                            player: "shaMiss",
-                        },
+            card: {
+                card: {},
+                translate: {},
+                list: [],
+            },
+            skill: {
+                skill: {
+                    "逆光": {
                         forced: true,
+                        trigger: {
+                            target: "shaBegin",
+                        },
                         content: function () {
-                            player.temp = 1
+                            'step 0'
+                            player.chooseToUse({name: trigger.card.name}, `逆光：是否对${get.translation(trigger.player)}使用一张${get.translation(trigger.card.name)}？`, trigger.player, -1).set('logSkill', '逆光');
+                            player.addTempSkill('逆光_used', 'shaEnd');
+                            player.temp = 0
+                            'step 1'
+                            if (player.temp) {
+                                trigger.cancel()
+                            }
                         },
-                        sub: true,
+                        subSkill: {
+                            used: {
+                                trigger: {
+                                    player: "shaMiss",
+                                },
+                                forced: true,
+                                content: function () {
+                                    player.temp = 1
+                                },
+                                sub: true,
+                                "_priority": 0,
+                                sourceSkill: "逆光",
+                            },
+                        },
                         "_priority": 0,
-                        sourceSkill: "逆光",
                     },
-                },
-                "_priority": 0,
-            },
-            "格斗": {
-                trigger: {
-                    player: "damageEnd",
-                    source: "damageEnd",
-                },
-                frequent: true,
-                content: function () {
-                    player.draw(trigger.num)
-                },
-                "_priority": 0,
-            },
-            "矢量": {
-                audio: "ext:矢量:true",
-                trigger: {
-                    player: "damageBegin4",
-                },
-                direct: true,
-                usable: 1,
-                filter: function (event, player) {
-                    return player.countCards('hes') > 0;
-                },
-                content: function () {
-                    "step 0"
-                    player.chooseCardTarget({
-                        position: "hes",
-                        filterTarget: function (card, player, target) {
-                            return player != target;
-                        },
-                        prompt: "弃置一张牌，将此伤害转移给其他角色",
-                    }).setHiddenSkill(event.name);
-                    "step 1"
-                    if (result.bool) {
-                        player.discard(result.cards);
-                        var target = result.targets[0];
-                        player.logSkill(event.name, target);
-                        trigger.cancel();
-                        event.target = target;
-                        event.card = result.cards[0];
-                        event.related = event.target.damage(trigger.source || 'nosource', 'nocard');
-                    } else {
-                        event.finish();
-                    }
-                },
-                "_priority": 0,
-            },
-            "天照": {
-                audio: "ext:天照:true",
-                enable: ["chooseToUse","chooseToRespond"],
-                filterCard: {
-                    name: "sha",
-                    color: "black",
-                },
-                viewAs: {
-                    name: "sha",
-                    nature: "fire",
-                },
-                viewAsFilter(player) {
-                    return player.countCards("hes", {name: 'sha', color: 'black'});
-                },
-                prompt: "将一张黑【杀】当【火杀】使用或打出",
-                async onuse(result, player) {
-                    player.addTempSkill('天照_used', 'shaEnd');
-                },
-                subSkill: {
-                    used: {
+                    "格斗": {
                         trigger: {
-                            player: "shaDamage",
+                            player: "damageEnd",
+                            source: "damageEnd",
                         },
-                        forced: true,
-                        async content(event, trigger, player) {
-                            trigger.target.addMark("天照_mark", 1);
-                            trigger.target.addSkill("天照_mark");
+                        frequent: true,
+                        content: function () {
+                            player.draw(trigger.num)
                         },
-                        sub: true,
                         "_priority": 0,
-                        sourceSkill: "天照",
                     },
-                    mark: {
-                        mark: true,
-                        marktext: "照",
-                        intro: {
-                            content: "回合开始时进行判定，若为黑色，受到无来源的#点伤害",
-                        },
+                    "矢量": {
+                        audio: "ext:矢量:true",
                         trigger: {
-                            player: "phaseZhunbeiBegin",
+                            player: "damageBegin4",
                         },
-                        async content(event, trigger, player) {
-                            console.log('mark', event, trigger, player);
-                            player.judge(card => {
-                                if (get.color(card) === 'black') {
-                                    player.damage(player.storage['天照_mark']);
-                                }
-                            });
+                        direct: true,
+                        usable: 1,
+                        filter: function (event, player) {
+                            return player.countCards('hes') > 0;
                         },
-                        sub: true,
-                        sourceSkill: "天照",
+                        content: function () {
+                            "step 0"
+                            player.chooseCardTarget({
+                                position: "hes",
+                                filterTarget: function (card, player, target) {
+                                    return player != target;
+                                },
+                                prompt: "弃置一张牌，将此伤害转移给其他角色",
+                            }).setHiddenSkill(event.name);
+                            "step 1"
+                            if (result.bool) {
+                                player.discard(result.cards);
+                                var target = result.targets[0];
+                                player.logSkill(event.name, target);
+                                trigger.cancel();
+                                event.target = target;
+                                event.card = result.cards[0];
+                                event.related = event.target.damage(trigger.source || 'nosource', 'nocard');
+                            } else {
+                                event.finish();
+                            }
+                        },
                         "_priority": 0,
                     },
+                    "天照": {
+                        audio: "ext:天照:true",
+                        enable: ["chooseToUse", "chooseToRespond"],
+                        filterCard: {
+                            name: "sha",
+                            color: "black",
+                        },
+                        viewAs: {
+                            name: "sha",
+                            nature: "fire",
+                        },
+                        viewAsFilter(player) {
+                            return player.countCards("hes", {name: 'sha', color: 'black'});
+                        },
+                        prompt: "将一张黑【杀】当【火杀】使用或打出",
+                        async onuse(result, player) {
+                            player.addTempSkill('天照_used', 'shaEnd');
+                        },
+                        subSkill: {
+                            used: {
+                                trigger: {
+                                    player: "shaDamage",
+                                },
+                                forced: true,
+                                async content(event, trigger, player) {
+                                    trigger.target.addMark("天照_mark", 1);
+                                    trigger.target.addSkill("天照_mark");
+                                },
+                                sub: true,
+                                "_priority": 0,
+                                sourceSkill: "天照",
+                            },
+                            mark: {
+                                mark: true,
+                                marktext: "照",
+                                charlotte: true,              // 锁定技标记
+                                forced: true,
+                                intro: {
+                                    content: "回合开始时进行判定，若为黑色，受到无来源的#点伤害",
+                                },
+                                trigger: {
+                                    player: "phaseZhunbeiBegin",
+                                },
+                                async content(event, trigger, player) {
+                                    console.log('mark', event, trigger, player);
+                                    player.judge(card => {
+                                        if (get.color(card) === 'black') {
+                                            player.damage(player.storage['天照_mark']);
+                                        }
+                                    });
+                                },
+                                sub: true,
+                                sourceSkill: "天照",
+                                "_priority": 0,
+                            },
+                        },
+                        "_priority": 0,
+                        ai: {
+                            respondSha: true,       // 告诉AI，此技能可以用来响应杀
+                            skillTagFilter(player) {
+                                return player.countCards('h', {name: 'sha', color: 'black'}) > 0;
+                            } // 有红色的手牌时才告诉AI
+                        },
+                    },
+                    "火遁": {
+                        audio: "ext:火遁:true",
+                        enable: ["chooseToUse", "chooseToRespond"],
+                        filterCard: {
+                            color: "red",
+                        },
+                        viewAs: {
+                            name: "sha",
+                            nature: "fire",
+                        },
+                        viewAsFilter(player) {
+                            return player.countCards("hes", {color: 'red'});
+                        },
+                        prompt: "将一张红色牌当【火杀】使用或打出",
+                        "_priority": 0,
+                        ai: {
+                            respondSha: true,       // 告诉AI，此技能可以用来响应杀
+                            skillTagFilter(player) {
+                                return player.countCards('h', {color: 'red'}) > 0;
+                            } // 有红色的手牌时才告诉AI
+                        }
+                    },
+                    "月读": {
+                        enable: "phaseUse",
+                        usable: 1,
+                        filterTarget(card, player, target){ // 此效果意为需要选择目标，返回值为数组，传参为event.targets。
+                            return target !== player && target.countCards('h') > 0; // 不能选择自己
+                        },
+                        async cost(event, trigger, player) {
+                            event.result = await player
+                                .chooseTarget(get.prompt2(event.skill), (card, player, target) => {
+                                    if (target === player) {
+                                        return false;
+                                    }
+                                    if (player.isUnseen()) {
+                                        return target.isUnseen();
+                                    }
+                                    return !target.isFriendOf(player);
+                                })
+                                .setHiddenSkill(event.skill)
+                                .forResult();
+                        },
+                        async content(event, trigger, player) {
+                            const target = event.targets[0];
+                            const next = player
+                                .chooseCardOL([player, target], "月读：请选择要展示的牌", true, 1)
+                                .set("source", player);
+                            next.aiCard = function (target) {
+                                return { bool: true, cards: target.getCards('h').randomGet() };
+                            };
+                            const result = await next.forResult();
+                            let cards1 = result[0].cards,
+                                cards2 = result[1].cards;
+                            await player.showCards(cards1);
+                            await target.showCards(cards2);
+                            let card1 = cards1[0],
+                                card2 = cards2[0];
+                            if (get.color(card1) === get.color(card2)) {
+                                target.addTempSkill("月读_mark");
+                            }
+                        },
+                        subSkill: {
+                            mark: {
+                                charlotte: true,
+                                forced: true,
+                                mark: true,
+                                marktext: "读",
+                                intro: {
+                                    content: "非锁定技失效且不能使用或打出牌",
+                                },
+                                mod: {
+                                    cardEnabled2(card) {
+                                        if (get.position(card) === "h") {
+                                            return false;
+                                        }
+                                    },
+                                },
+                                init: function (player, skill) {
+                                    player.addSkillBlocker(skill);
+                                    player.addTip(skill, "非锁定技失效");
+                                },
+                                onremove: function (player, skill) {
+                                    player.removeSkillBlocker(skill);
+                                    player.removeTip(skill);
+                                },
+                                skillBlocker: function (skill, player) {
+                                    return !lib.skill[skill].persevereSkill && !lib.skill[skill].charlotte && !get.is.locked(skill, player);
+                                },
+                            }
+                        }
+                    },
                 },
-                "_priority": 0,
+                translate: {
+                    "逆光": "逆光",
+                    "逆光_info": "锁定技，当你成为杀的目标时，你可以对杀的使用者使用一张更早结算的杀。然后若你以此法使用的杀被闪抵消，则其使用的杀无效。",
+                    "格斗": "格斗",
+                    "格斗_info": "当你受到或造成伤害后，你摸等同于此伤害值的牌。",
+                    "矢量": "矢量",
+                    "矢量_info": "每回合限一次，当你受到伤害时，你可以弃一张牌并选择一名其他角色，将此伤害转移给对方",
+                    "天照": "天照",
+                    "天照_info": "你可以把黑杀当火杀使用或打出，你以此法使用或打出的杀造成伤害时，使对方获得一枚【照】标记（回合开始时进行判定，若为黑色，受到无来源的X点伤害，X为【照】标记的层数）",
+                    "火遁": "火遁",
+                    "火遁_info": "你可以将红色牌当火杀使用或打出",
+                    "月读": "月读",
+                    "月读_info": "每回合限一次，你可以指定一名其他角色，与其同时展示一张牌，若你和他展示的牌颜色一致，你使其获得【读】状态（非锁定技失效且不能使用或打出牌），直到回合结束",
+                },
             },
-            "火遁": {
-                audio: "ext:火遁:true",
-                enable: ["chooseToUse","chooseToRespond"],
-                filterCard: {
-                    color: "red",
-                },
-                viewAs: {
-                    name: "sha",
-                    nature: "fire",
-                },
-                viewAsFilter(player) {
-                    return player.countCards("hes", {color: 'red'});
-                },
-                prompt: "将一张红色牌当【火杀】使用或打出",
-                "_priority": 0,
-            },
+            intro: "",
+            author: "comiee",
+            diskURL: "",
+            forumURL: "",
+            version: "1.0",
         },
-        translate: {
-            "逆光": "逆光",
-            "逆光_info": "锁定技，当你成为杀的目标时，你可以对杀的使用者使用一张更早结算的杀。然后若你以此法使用的杀被闪抵消，则其使用的杀无效。",
-            "格斗": "格斗",
-            "格斗_info": "当你受到或造成伤害后，你摸等同于此伤害值的牌。",
-            "矢量": "矢量",
-            "矢量_info": "每回合限一次，当你受到伤害时，你可以弃一张牌并选择一名其他角色，将此伤害转移给对方",
-            "天照": "天照",
-            "天照_info": "你可以把黑杀当火杀使用或打出，你以此法使用或打出的杀造成伤害时，使对方获得一枚【照】标记（回合开始时进行判定，若为黑色，受到无来源的X点伤害，X为【照】标记的层数）",
-            "火遁": "火遁",
-            "火遁_info": "你可以将红色牌当火杀使用或打出",
-        },
-    },
-    intro: "",
-    author: "comiee",
-    diskURL: "",
-    forumURL: "",
-    version: "1.0",
-},files:{"character":["巴泽特.jpg","一方通行.jpg","宇智波鼬.jpg"],"card":[],"skill":[],"audio":[]},connect:false} 
+        files: {"character": ["一方通行.jpg", "巴泽特.jpg", "宇智波鼬.jpg"], "card": [], "skill": [], "audio": []},
+        connect: false
+    }
 };
