@@ -118,7 +118,7 @@ export default function () {
                         "_priority": 0,
                     },
                     "天照": {
-                        audio: "ext:天照:true",
+                        audio: "ext:英雄/天照",
                         enable: ["chooseToUse", "chooseToRespond"],
                         filterCard: {
                             name: "sha",
@@ -164,7 +164,7 @@ export default function () {
                                 },
                                 async content(event, trigger, player) {
                                     for (let i = 0; i < player.storage['天照_mark']; i++) {
-                                        player.judge(card => {
+                                        event.result = await player.judge(card => {
                                             if (get.color(card) === 'black') {
                                                 player.damage('fire');
                                             }
