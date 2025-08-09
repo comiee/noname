@@ -8,8 +8,8 @@ export default function(){
 		},help:{},config:{},package:{
     character: {
         character: {
-            "巴泽特": ["female","qun",4,["逆光","格斗","longdan"],["ext:英雄/image/巴泽特.jpg","die:ext:英雄/audio/die/巴泽特.mp3"]],
-            "一方通行": ["male","qun",4,["矢量"],["ext:英雄/image/一方通行.jpg","die:ext:英雄/audio/die/一方通行.mp3"]],
+            "巴泽特": ["female","qun",4,["逆光","格斗","longdan"],["ext:英雄/巴泽特.jpg","die:ext:英雄/audio/die/巴泽特.mp3"]],
+            "一方通行": ["male","qun",4,["矢量"],["ext:英雄/一方通行.jpg","die:ext:英雄/audio/die/一方通行.mp3"]],
             "宇智波鼬": {
                 sex: "male",
                 group: "qun",
@@ -17,7 +17,7 @@ export default function(){
                 maxHp: 3,
                 hujia: 0,
                 skills: [],
-                img: "extension/英雄/image/宇智波鼬.jpg",
+                img: "extension/英雄/宇智波鼬.jpg",
             },
         },
         translate: {
@@ -132,5 +132,5 @@ export default function(){
     diskURL: "",
     forumURL: "",
     version: "1.0",
-},files:{"character":["宇智波鼬.jpg"],"card":[],"skill":[],"audio":[]},connect:false} 
+},files:{"character":["宇智波鼬.jpg"],"card":[],"skill":[],"audio":[]},connect:false}
 };
