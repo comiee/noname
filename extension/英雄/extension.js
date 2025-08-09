@@ -133,7 +133,7 @@ export default function () {
                         },
                         prompt: "将一张黑【杀】当【火杀】使用或打出",
                         async onuse(result, player) {
-                            player.addTempSkill('天照_used', 'shaEnd');
+                            player.addTempSkill('天照_used');
                         },
                         subSkill: {
                             used: {
@@ -142,8 +142,10 @@ export default function () {
                                 },
                                 forced: true,
                                 async content(event, trigger, player) {
-                                    trigger.target.addMark("天照_mark", 1);
-                                    trigger.target.addSkill("天照_mark");
+                                    if (trigger.skill === "天照") {
+                                        trigger.target.addMark("天照_mark", 1);
+                                        trigger.target.addSkill("天照_mark");
+                                    }
                                 },
                                 sub: true,
                                 "_priority": 0,
@@ -161,10 +163,9 @@ export default function () {
                                     player: "phaseZhunbeiBegin",
                                 },
                                 async content(event, trigger, player) {
-                                    console.log('mark', event, trigger, player);
                                     player.judge(card => {
                                         if (get.color(card) === 'black') {
-                                            player.damage(player.storage['天照_mark']);
+                                            player.damage(player.storage['天照_mark']); // TODO 判定去掉，造成火伤，来源宇智波鼬
                                         }
                                     });
                                 },
@@ -206,7 +207,7 @@ export default function () {
                     "月读": {
                         enable: "phaseUse",
                         usable: 1,
-                        filterTarget(card, player, target){ // 此效果意为需要选择目标，返回值为数组，传参为event.targets。
+                        filterTarget(card, player, target) { // 此效果意为需要选择目标，返回值为数组，传参为event.targets。
                             return target !== player && target.countCards('h') > 0; // 不能选择自己
                         },
                         async cost(event, trigger, player) {
@@ -229,7 +230,7 @@ export default function () {
                                 .chooseCardOL([player, target], "月读：请选择要展示的牌", true, 1)
                                 .set("source", player);
                             next.aiCard = function (target) {
-                                return { bool: true, cards: target.getCards('h').randomGet() };
+                                return {bool: true, cards: target.getCards('h').randomGet()};
                             };
                             const result = await next.forResult();
                             let cards1 = result[0].cards,
