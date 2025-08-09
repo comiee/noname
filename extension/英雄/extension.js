@@ -121,28 +121,21 @@ export default function () {
                             return player.countCards("hes", {name: 'sha', color: 'black'});
                         },
                         prompt: "将一张黑【杀】当【火杀】使用或打出",
-                        onuse(result, player) {
-                            "step 0"
-                            console.log('enter!!!', result, player);
-
-                            for (let target of result.targets) {
-                                console.log(target);
-                                target.addMark("天照_mark", 1);
-                            }
-
+                        async onuse(result, player) {
+                            player.addTempSkill('天照_used', 'shaEnd');
                         },
                         subSkill: {
                             used: {
                                 trigger: {
-                                    player: "shaMiss",
+                                    player: "shaDamage",
                                 },
                                 forced: true,
-                                content: function () {
-                                    player.temp = 1
+                                async content(event, trigger, player) {
+                                    trigger.target.addMark("天照_mark", 1);
                                 },
                                 sub: true,
                                 "_priority": 0,
-                                sourceSkill: "逆光",
+                                sourceSkill: "天照",
                             },
                             mark: {
                                 mark: true,               // 显示标记
@@ -156,12 +149,6 @@ export default function () {
                                 sub: true,
                                 sourceSkill: "天照",
                                 "_priority": 0,
-                            },
-                        },
-                        ai: {
-                            respondSha: true,
-                            skillTagFilter(player) {
-                                return player.countCards("hes", {name: 'sha', color: 'black'});
                             },
                         },
                         "_priority": 0,
