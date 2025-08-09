@@ -132,6 +132,7 @@ export default function () {
                                 forced: true,
                                 async content(event, trigger, player) {
                                     trigger.target.addMark("天照_mark", 1);
+                                    trigger.target.addSkill("天照_mark");
                                 },
                                 sub: true,
                                 "_priority": 0,
@@ -143,8 +144,16 @@ export default function () {
                                 intro: {
                                     content: "回合开始时进行判定，若为黑色，受到无来源的#点伤害",  // 标记描述
                                 },
+                                trigger: {
+                                    player: 'phaseZhunbeiBegin'
+                                },
                                 async content(event, trigger, player) {
                                     console.log('mark', event, trigger, player);
+                                    player.judge(card => {
+                                        if (get.color(card) === 'black') {
+                                            player.damage(player.storage['天照_mark']);
+                                        }
+                                    });
                                 },
                                 sub: true,
                                 sourceSkill: "天照",
