@@ -157,17 +157,19 @@ export default function () {
                                 charlotte: true,              // 锁定技标记
                                 forced: true,
                                 intro: {
-                                    content: "回合开始时进行判定，若为黑色，受到无来源的#点伤害",
+                                    content: "回合开始时进行#次判定，若为黑色，受到1点火伤",
                                 },
                                 trigger: {
                                     player: "phaseZhunbeiBegin",
                                 },
                                 async content(event, trigger, player) {
-                                    player.judge(card => {
-                                        if (get.color(card) === 'black') {
-                                            player.damage(player.storage['天照_mark']); // TODO 判定去掉，造成火伤，来源宇智波鼬
-                                        }
-                                    });
+                                    for (let i = 0; i < player.storage['天照_mark']; i++) {
+                                        player.judge(card => {
+                                            if (get.color(card) === 'black') {
+                                                player.damage('fire');
+                                            }
+                                        });
+                                    }
                                 },
                                 sub: true,
                                 sourceSkill: "天照",
@@ -179,7 +181,7 @@ export default function () {
                             respondSha: true,       // 告诉AI，此技能可以用来响应杀
                             skillTagFilter(player) {
                                 return player.countCards('h', {name: 'sha', color: 'black'}) > 0;
-                            } // 有红色的手牌时才告诉AI
+                            }
                         },
                     },
                     "火遁": {
@@ -282,7 +284,7 @@ export default function () {
                     "矢量": "矢量",
                     "矢量_info": "每回合限一次，当你受到伤害时，你可以弃一张牌并选择一名其他角色，将此伤害转移给对方",
                     "天照": "天照",
-                    "天照_info": "你可以把黑杀当火杀使用或打出，你以此法使用或打出的杀造成伤害时，使对方获得一枚【照】标记（回合开始时进行判定，若为黑色，受到无来源的X点伤害，X为【照】标记的层数）",
+                    "天照_info": "你可以把黑杀当火杀使用或打出，你以此法使用或打出的杀造成伤害时，使对方获得一枚【照】标记（回合开始时进行X次判定，若为黑色，受到1点火伤，X为【照】标记的层数）",
                     "火遁": "火遁",
                     "火遁_info": "你可以将红色牌当火杀使用或打出",
                     "月读": "月读",
