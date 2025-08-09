@@ -185,7 +185,7 @@ export default function () {
                         },
                     },
                     "火遁": {
-                        audio: "ext:火遁:true",
+                        audio: "ext:英雄/豪火球之术",
                         enable: ["chooseToUse", "chooseToRespond"],
                         filterCard: {
                             color: "red",
