@@ -124,6 +124,7 @@ export default function () {
                             name: "sha",
                             color: "black",
                         },
+                        position: "hes",
                         viewAs: {
                             name: "sha",
                             nature: "fire",
@@ -190,6 +191,7 @@ export default function () {
                         filterCard: {
                             color: "red",
                         },
+                        position: "hes",
                         viewAs: {
                             name: "sha",
                             nature: "fire",
