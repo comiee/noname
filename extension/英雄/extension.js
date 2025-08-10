@@ -257,21 +257,24 @@ export default function () {
                             return player.countCards('hes') > 0;
                         },
                         async content(event, trigger, player) {
-                            let result = await player.chooseCardTarget({
-                                position: "hes",
-                                filterTarget: function (card, player, target) {
-                                    return player !== target;
-                                },
-                                prompt: "弃置一张牌，将此伤害转移给其他角色",
-                            }).setHiddenSkill(event.name);
+                            let result = await player
+                                .chooseCardTarget({
+                                    position: "hes",
+                                    filterTarget: function (card, player, target) {
+                                        return player !== target;
+                                    },
+                                    prompt: "弃置一张牌，将此伤害转移给其他角色",
+                                })
+                                .setHiddenSkill(event.name)
+                                .forResult();
                             if (result.bool) {
                                 player.discard(result.cards);
                                 var target = result.targets[0];
                                 player.logSkill(event.name, target);
-                                trigger.cancel();
                                 event.target = target;
                                 event.card = result.cards[0];
-                                event.related = event.target.damage(trigger.source || 'nosource', 'nocard');
+                                event.related = event.target.damage(trigger.num, trigger.source || 'nosource', 'nocard');
+                                trigger.cancel();
                             } else {
                                 event.finish();
                             }
@@ -300,7 +303,27 @@ export default function () {
                         },
                         "_priority": 0,
                     },
-                    "御坂网络": {},
+                    "御坂网络": {
+                        mark: true,
+                        marktext: "电池",
+                        forced: true,
+                        intro: {
+                            content: "当前持有#个电池",
+                        },
+                        trigger: {
+                            player: ["loseEnd", "phaseDiscardEnd"],
+                        },
+                        filter(event, player) {
+                            return _status.currentPhase !== player || event.name === 'phaseDiscard';
+                        },
+                        async content(event, trigger, player) {
+                            player.addMark('御坂网络', trigger.num);
+                        },
+                        init(player) {
+                            player.addMark('御坂网络', 2);
+                        },
+                        "_priority": 0,
+                    },
                     "矢量操作": {},
                 },
                 translate: {
