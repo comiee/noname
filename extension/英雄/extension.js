@@ -301,17 +301,22 @@ export default function () {
                             content: "当前持有#个电池",
                         },
                         trigger: {
-                            player: ["loseEnd", "phaseDiscardEnd"],
+                            player: "loseAfter",
                         },
                         filter(event, player) {
-                            if (event.name === 'phaseDiscard') {
-                                return true;
-                            }
-                            if(_status.currentPhase === player){
+                            if (event.type !== 'discard' && event.type !== 'gain') {
                                 return false;
                             }
                             const evt = event.getl(player);
-                            return evt && evt.player === player && evt.hs && evt.hs.length > 0;
+                            if (!evt || evt.player !== player) {
+                                return false;
+                            }
+                            for (let k of ['hs', 'es', 'ss']) {
+                                if (evt[k] && evt[k].length > 0) {
+                                    return true;
+                                }
+                            }
+                            return false;
                         },
                         async content(event, trigger, player) {
                             if (!trigger.cards) {
@@ -364,9 +369,9 @@ export default function () {
                     "矢量偏转": "矢量偏转",
                     "矢量偏转_info": "每回合限一次，当你受到伤害时，你可以弃一张牌并选择一名其他角色，将此伤害转移给对方",
                     "一方通行": "一方通行",
-                    "一方通行_info": "【觉醒技】当你体力小于1或失去最后一张手牌时，你减一点体力上限并回满体力，失去【矢量偏转】，获得【御坂网络】（获得此技能时，你获得2个“电池”；当你于弃牌阶段或回合外失去手牌时，获得等量的“电池”；你至多拥有3个“电池”）、【矢量操作】（当任意角色受到伤害时，你可以消耗一个“电池”，将此伤害转移给一名其他角色）",
+                    "一方通行_info": "【觉醒技】当你体力小于1或失去最后一张手牌时，你减一点体力上限并回满体力，失去【矢量偏转】，获得【御坂网络】（获得此技能时，你获得2个“电池”；当你的牌被弃置或被其他角色获取时，你获得等量的“电池”；你至多拥有3个“电池”）、【矢量操作】（当任意角色受到伤害时，你可以消耗一个“电池”，将此伤害转移给一名其他角色）",
                     "御坂网络": "御坂网络",
-                    "御坂网络_info": "获得此技能时，你获得2个“电池”；当你于弃牌阶段或回合外失去手牌时，获得等量的“电池”；你至多拥有3个“电池”",
+                    "御坂网络_info": "获得此技能时，你获得2个“电池”；当你的牌被弃置或被其他角色获取时，你获得等量的“电池”；你至多拥有3个“电池”",
                     "矢量操作": "矢量操作",
                     "矢量操作_info": "每回合限一次，当任意角色受到伤害时，你可以消耗一个“电池”，将此伤害转移给一名其他角色",
                 },
