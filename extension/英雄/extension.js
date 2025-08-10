@@ -34,7 +34,7 @@ export default function () {
                         hujia: 0,
                         skills: ["天照", "火遁", "月读"],
                         img: "extension/英雄/宇智波鼬.jpg",
-                        dieAudios: ["ext:英雄/audio/die/宇智波鼬die.mp3"],
+                        dieAudios: ["ext:英雄/宇智波鼬die.mp3"],
                     },
                 },
                 translate: {
