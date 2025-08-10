@@ -140,7 +140,7 @@ export default function () {
                                     player: "phaseZhunbeiBegin",
                                 },
                                 async content(event, trigger, player) {
-                                    for (let i = 0; i < player.storage['天照_mark']; i++) {
+                                    for (let i = 0; i < player.countMark('天照_mark'); i++) {
                                         event.result = await player.judge(card => {
                                             if (get.color(card) === 'black') {
                                                 player.damage('fire');
@@ -190,7 +190,6 @@ export default function () {
                                     }
                                     return !target.isFriendOf(player);
                                 })
-                                .setHiddenSkill(event.skill)
                                 .forResult();
                         },
                         async content(event, trigger, player) {
@@ -249,35 +248,26 @@ export default function () {
                     "矢量偏转": {
                         audio: "ext:矢量:true",
                         trigger: {
-                            player: "damageBegin4",
+                            player: "damageBegin3",
                         },
-                        direct: true,
                         usable: 1,
                         filter(event, player) {
                             return player.countCards('hes') > 0;
                         },
-                        async content(event, trigger, player) {
-                            let result = await player
+                        async cost(event, trigger, player) {
+                            event.result = await player
                                 .chooseCardTarget({
                                     position: "hes",
                                     filterTarget: function (card, player, target) {
                                         return player !== target;
                                     },
-                                    prompt: "弃置一张牌，将此伤害转移给其他角色",
+                                    prompt: get.prompt2(event.skill),
                                 })
-                                .setHiddenSkill(event.name)
                                 .forResult();
-                            if (result.bool) {
-                                player.discard(result.cards);
-                                var target = result.targets[0];
-                                player.logSkill(event.name, target);
-                                event.target = target;
-                                event.card = result.cards[0];
-                                event.related = event.target.damage(trigger.num, trigger.source || 'nosource', 'nocard');
-                                trigger.cancel();
-                            } else {
-                                event.finish();
-                            }
+                        },
+                        async content(event, trigger, player) {
+                            trigger.player = event.targets[0];
+                            await player.discard(event.cards);
                         },
                         "_priority": 0,
                     },
@@ -314,10 +304,21 @@ export default function () {
                             player: ["loseEnd", "phaseDiscardEnd"],
                         },
                         filter(event, player) {
-                            return _status.currentPhase !== player || event.name === 'phaseDiscard';
+                            if (event.name === 'phaseDiscard') {
+                                return true;
+                            }
+                            if(_status.currentPhase === player){
+                                return false;
+                            }
+                            const evt = event.getl(player);
+                            return evt && evt.player === player && evt.hs && evt.hs.length > 0;
                         },
                         async content(event, trigger, player) {
-                            player.storage['御坂网络'] = Math.min(player.storage['御坂网络'] + trigger.num, 3);
+                            if (!trigger.cards) {
+                                return;
+                            }
+                            let num = player.countMark('御坂网络') + trigger.cards.length;
+                            player.setMark('御坂网络', Math.min(num, 3));
                             player.markSkill('御坂网络');
                         },
                         init(player) {
@@ -325,7 +326,28 @@ export default function () {
                         },
                         "_priority": 0,
                     },
-                    "矢量操作": {},
+                    "矢量操作": {
+                        audio: "ext:矢量:true",
+                        trigger: {
+                            global: "damageBegin3",
+                        },
+                        filter(event, player) {
+                            return player.hasMark('御坂网络');
+                        },
+                        async cost(event, trigger, player) {
+                            let text = `${get.translation(trigger.player)}即将受到${trigger.num}点伤害，是否消耗一个电池将此伤害转移给其他人？`
+                            event.result = await player
+                                .chooseTarget(function (card, player, target) {
+                                    return target !== trigger.player;
+                                }, text)
+                                .forResult();
+                        },
+                        async content(event, trigger, player) {
+                            trigger.player = event.targets[0];
+                            player.removeMark('御坂网络');
+                        },
+                        "_priority": 0,
+                    },
                 },
                 translate: {
                     "逆光": "逆光",
@@ -343,7 +365,7 @@ export default function () {
                     "一方通行": "一方通行",
                     "一方通行_info": "【觉醒技】当你体力小于1或失去最后一张手牌时，你减一点体力上限并回满体力，失去【矢量偏转】，获得【御坂网络】（获得此技能时，你获得2个“电池”；当你于弃牌阶段或回合外失去牌时，获得等量的“电池”：你至多拥有3个“电池”）、【矢量操作】（当任意角色收到伤害时，你可以消耗一个“电池”，将此伤害转移给一名其他角色）",
                     "御坂网络": "御坂网络",
-                    "御坂网络_info": "获得此技能时，你获得2个“电池”；当你于弃牌阶段或回合外失去牌时，获得等量的“电池”：你至多拥有3个“电池”",
+                    "御坂网络_info": "获得此技能时，你获得2个“电池”；当你于弃牌阶段或回合外失去手牌时，获得等量的“电池”：你至多拥有3个“电池”",
                     "矢量操作": "矢量操作",
                     "矢量操作_info": "当任意角色收到伤害时，你可以消耗一个“电池”，将此伤害转移给一名其他角色",
                 },
