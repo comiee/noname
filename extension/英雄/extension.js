@@ -317,7 +317,8 @@ export default function () {
                             return _status.currentPhase !== player || event.name === 'phaseDiscard';
                         },
                         async content(event, trigger, player) {
-                            player.addMark('御坂网络', trigger.num);
+                            player.storage['御坂网络'] = Math.min(player.storage['御坂网络'] + trigger.num, 3);
+                            player.markSkill('御坂网络');
                         },
                         init(player) {
                             player.addMark('御坂网络', 2);
