@@ -279,6 +279,25 @@ export default function () {
                         "_priority": 0,
                     },
                     "一方通行": {
+                        skillAnimation: true,
+                        animationColor: "water",
+                        trigger: {
+                            player: ["changeHp", "loseAfter"],
+                        },
+                        juexingji: true,
+                        unique: true,
+                        forced: true,
+                        filter(event, player) {
+                            return player.hp <= 0 || player.countCards('h') <= 0;
+                        },
+                        async content(event, trigger, player) {
+                            await player.loseMaxHp();
+                            await player.recover(Infinity);
+                            player.awakenSkill(event.name);
+                            player.removeSkill('矢量偏转');
+                            player.addSkill('御坂网络');
+                            player.addSkill('矢量操作');
+                        },
                         "_priority": 0,
                     },
                     "御坂网络": {},
@@ -298,7 +317,7 @@ export default function () {
                     "矢量偏转": "矢量偏转",
                     "矢量偏转_info": "每回合限一次，当你受到伤害时，你可以弃一张牌并选择一名其他角色，将此伤害转移给对方",
                     "一方通行": "一方通行",
-                    "一方通行_info": "【觉醒技】当你濒死或失去最后一张手牌时，你减一点体力上限并回满体力，失去【矢量偏转】，获得【御坂网络】（获得此技能时，你获得2个“电池”；当你于弃牌阶段或回合外失去牌时，获得等量的“电池”：你至多拥有3个“电池”）、【矢量操作】（当任意角色收到伤害时，你可以消耗一个“电池”，将此伤害转移给一名其他角色）",
+                    "一方通行_info": "【觉醒技】当你体力小于1或失去最后一张手牌时，你减一点体力上限并回满体力，失去【矢量偏转】，获得【御坂网络】（获得此技能时，你获得2个“电池”；当你于弃牌阶段或回合外失去牌时，获得等量的“电池”：你至多拥有3个“电池”）、【矢量操作】（当任意角色收到伤害时，你可以消耗一个“电池”，将此伤害转移给一名其他角色）",
                     "御坂网络": "御坂网络",
                     "御坂网络_info": "获得此技能时，你获得2个“电池”；当你于弃牌阶段或回合外失去牌时，获得等量的“电池”：你至多拥有3个“电池”",
                     "矢量操作": "矢量操作",
