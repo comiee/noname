@@ -331,6 +331,7 @@ export default function () {
                         trigger: {
                             global: "damageBegin3",
                         },
+                        usable: 1,
                         filter(event, player) {
                             return player.hasMark('御坂网络');
                         },
@@ -367,7 +368,7 @@ export default function () {
                     "御坂网络": "御坂网络",
                     "御坂网络_info": "获得此技能时，你获得2个“电池”；当你于弃牌阶段或回合外失去手牌时，获得等量的“电池”：你至多拥有3个“电池”",
                     "矢量操作": "矢量操作",
-                    "矢量操作_info": "当任意角色收到伤害时，你可以消耗一个“电池”，将此伤害转移给一名其他角色",
+                    "矢量操作_info": "每回合限一次，当任意角色收到伤害时，你可以消耗一个“电池”，将此伤害转移给一名其他角色",
                 },
             },
             intro: "",
