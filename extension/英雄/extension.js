@@ -291,6 +291,52 @@ export default function () {
                         },
                         "_priority": 0,
                     },
+                    "千鸟": {
+                        audio: "ext:英雄/千鸟",
+                        enable: "phaseUse",
+                        usable: 1,
+                        filter(event, player) {
+                            return player.countCards("h") > 0;
+                        },
+                        filterTarget(card, player, target) {
+                            return player !== target;
+                        },
+                        async cost(event, trigger, player) {
+                            event.result = await player
+                                .chooseTarget(get.prompt2(event.skill), (card, player, target) => {
+                                    if (target === player) {
+                                        return false;
+                                    }
+                                    if (player.isUnseen()) {
+                                        return target.isUnseen();
+                                    }
+                                    return !target.isFriendOf(player);
+                                })
+                                .forResult();
+                        },
+                        async content(event, trigger, player) {
+                            const target = event.targets[0];
+                            const next = target
+                                .chooseCard("千鸟：请选择要展示的牌", true, 1)
+                                .set("source", player);
+                            next.aiCard = function (target) {
+                                return {bool: true, cards: target.getCards('h').randomGet()};
+                            };
+                            let result = await next.forResult();
+                            let cards = result.cards;
+                            await target.showCards(cards);
+                            result = await player
+                                .chooseToGive(target, 1, function (card) {
+                                    return get.color(card) !== get.color(cards[0]);
+                                })
+                                .forResult();
+                            if (result.bool) {
+                                await target.damage("thunder");
+                                await target.discard(target.getEquips(2));
+                            }
+                        },
+                        "_priority": 0,
+                    },
                     "矢量偏转": {
                         audio: "ext:矢量:true",
                         trigger: {
@@ -415,7 +461,7 @@ export default function () {
                     "加具土命": "加具土命",
                     "加具土命_info": "你使用的火杀无距离限制；出牌阶段，你可以弃一张牌，移动场上一枚【照】标记的位置",
                     "千鸟": "千鸟",
-                    "千鸟_info": "每回合限一次，你可令一名其他角色展示一张手牌，若你交给其一张颜色不同的手牌，你对其造成一点伤害，并弃置其防具",
+                    "千鸟_info": "每回合限一次，你可令一名其他角色展示一张手牌，若你交给其一张颜色不同的手牌，你对其造成一点雷伤，并弃置其防具",
                     "矢量偏转": "矢量偏转",
                     "矢量偏转_info": "每回合限一次，当你受到伤害时，你可以弃一张牌并选择一名其他角色，将此伤害转移给对方",
                     "一方通行": "一方通行",
