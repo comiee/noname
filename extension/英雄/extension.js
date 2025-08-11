@@ -36,12 +36,22 @@ export default function () {
                         img: "extension/英雄/宇智波鼬.jpg",
                         dieAudios: ["ext:英雄/宇智波鼬die.mp3"],
                     },
+                    "宇智波佐助": {
+                        sex: "male",
+                        group: "qun",
+                        hp: 3,
+                        maxHp: 3,
+                        hujia: 0,
+                        skills: ["天照", "加具土命", "千鸟"],
+                        img: "extension/英雄/宇智波佐助.jpg",
+                    },
                 },
                 translate: {
                     "巴泽特": "巴泽特",
                     "一方通行": "一方通行",
                     "英雄": "英雄",
                     "宇智波鼬": "宇智波鼬",
+                    "宇智波佐助": "宇智波佐助",
                 },
             },
             card: {
@@ -386,7 +396,7 @@ export default function () {
             forumURL: "",
             version: "1.0",
         },
-        files: {"character": ["巴泽特.jpg", "宇智波鼬.jpg", "一方通行.jpg"], "card": [], "skill": [], "audio": []},
+        files: {"character": ["巴泽特.jpg", "宇智波鼬.jpg", "一方通行.jpg", "宇智波佐助.jpg"], "card": [], "skill": [], "audio": []},
         connect: false
     }
 };
