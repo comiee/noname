@@ -94,7 +94,11 @@ export default function () {
                         "_priority": 0,
                     },
                     "天照": {
-                        audio: "ext:英雄/天照",
+                        audio: 2,
+                        audioname2: {
+                            "宇智波鼬": "ext:英雄/天照_鼬",
+                            "宇智波佐助": "ext:英雄/天照_佐助",
+                        },
                         enable: ["chooseToUse", "chooseToRespond"],
                         filterCard: {
                             name: "sha",
