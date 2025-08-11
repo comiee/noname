@@ -193,19 +193,6 @@ export default function () {
                         filterTarget(card, player, target) { // 此效果意为需要选择目标，返回值为数组，传参为event.targets。
                             return target !== player && target.countCards('h') > 0; // 不能选择自己
                         },
-                        async cost(event, trigger, player) {
-                            event.result = await player
-                                .chooseTarget(get.prompt2(event.skill), (card, player, target) => {
-                                    if (target === player) {
-                                        return false;
-                                    }
-                                    if (player.isUnseen()) {
-                                        return target.isUnseen();
-                                    }
-                                    return !target.isFriendOf(player);
-                                })
-                                .forResult();
-                        },
                         async content(event, trigger, player) {
                             const target = event.targets[0];
                             const next = player
