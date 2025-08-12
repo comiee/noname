@@ -119,6 +119,9 @@ export default function () {
                             name: "sha",
                             nature: "fire",
                         },
+                        filter(event, player) {
+                            return player.countCards("hes", {name: 'sha', color: 'black'});
+                        },
                         viewAsFilter(player) {
                             return player.countCards("hes", {name: 'sha', color: 'black'});
                         },
@@ -180,6 +183,9 @@ export default function () {
                             name: "sha",
                             nature: "fire",
                         },
+                        filter(event, player) {
+                            return player.countCards("hes", {color: 'red'});
+                        },
                         viewAsFilter(player) {
                             return player.countCards("hes", {color: 'red'});
                         },
@@ -190,6 +196,9 @@ export default function () {
                         audio: "ext:英雄/月读",
                         enable: "phaseUse",
                         usable: 1,
+                        filter(event, player) {
+                            return player.countCards("h") > 0;
+                        },
                         filterTarget(card, player, target) { // 此效果意为需要选择目标，返回值为数组，传参为event.targets。
                             return target !== player && target.countCards('h') > 0; // 不能选择自己
                         },
@@ -263,6 +272,9 @@ export default function () {
                                 usable: 1,
                                 filterCard: true,
                                 position: "hes",
+                                filter(event, player) {
+                                    return game.players.some(p => p.hasMark("天照_mark"));
+                                },
                                 filterTarget(card, player, target) {
                                     if (ui.selected.targets.length === 0) {
                                         return target.hasMark("天照_mark");  // 第一个角色：有天照标记
@@ -313,7 +325,7 @@ export default function () {
                             return player.countCards("h") > 0;
                         },
                         filterTarget(card, player, target) {
-                            return player !== target;
+                            return player !== target && target.countCards('h') > 0;
                         },
                         async cost(event, trigger, player) {
                             event.result = await player
