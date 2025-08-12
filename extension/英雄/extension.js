@@ -312,6 +312,7 @@ export default function () {
                                 async content(event, trigger, player) {
                                     event.targets[0].addMark("天照_mark");
                                     event.targets[0].addSkill("天照_mark");
+                                    await player.discard(event.cards);
                                 }
                             }
                         },
