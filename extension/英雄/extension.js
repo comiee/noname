@@ -155,7 +155,7 @@ export default function () {
                                 },
                                 async content(event, trigger, player) {
                                     for (let i = 0; i < player.countMark('天照_mark'); i++) {
-                                        event.result = await player.judge(card => {
+                                        await player.judge(card => {
                                             if (get.color(card) === 'black') {
                                                 player.damage('fire');
                                             }
@@ -255,26 +255,53 @@ export default function () {
                                 }
                             }
                         },
-                        enable: "phaseUse",
-                        usable: 1,
-                        filterCard: true,
-                        position: "hes",
-                        filterTarget(card, player, target) {
-                            if (ui.selected.targets.length === 0) {
-                                return target.hasMark("天照_mark");  // 第一个角色：有天照标记
+                        group: ['加具土命_use', '加具土命_die'],
+                        subSkill: {
+                            use: {
+                                audio: "ext:英雄/加具土命",
+                                enable: "phaseUse",
+                                usable: 1,
+                                filterCard: true,
+                                position: "hes",
+                                filterTarget(card, player, target) {
+                                    if (ui.selected.targets.length === 0) {
+                                        return target.hasMark("天照_mark");  // 第一个角色：有天照标记
+                                    }
+                                    if (ui.selected.targets.length === 1) {
+                                        return target !== ui.selected.targets[0];  // 第二个角色：不与第一个角色相同
+                                    }
+                                    return true;
+                                },
+                                targetprompt: ["被移走", "移动目标"],
+                                selectTarget: 2,
+                                multitarget: true,
+                                async content(event, trigger, player) {
+                                    event.targets[0].removeMark("天照_mark");
+                                    event.targets[1].addMark("天照_mark");
+                                    event.targets[1].addSkill("天照_mark");
+                                }
+                            },
+                            die: {
+                                audio: "ext:英雄/加具土命",
+                                trigger: {
+                                    global: "die",
+                                },
+                                filterTarget(card, player, target) {
+                                    return target.hasMark("天照_mark") && player.countCards("hes") > 0;
+                                },
+                                async cost(event, trigger, player) {
+                                    event.result = await player
+                                        .chooseCardTarget({
+                                            position: "hes",
+                                            prompt: get.prompt2(event.skill),
+                                        })
+                                        .forResult();
+                                },
+                                async content(event, trigger, player) {
+                                    event.targets[0].addMark("天照_mark");
+                                    event.targets[0].addSkill("天照_mark");
+                                }
                             }
-                            if (ui.selected.targets.length === 1) {
-                                return target !== ui.selected.targets[0];  // 第二个角色：不与第一个角色相同
-                            }
-                            return true;
-                        },
-                        targetprompt: ["被移走", "移动目标"],
-                        selectTarget: 2,
-                        multitarget: true,
-                        async content(event, trigger, player) {
-                            event.targets[0].removeMark("天照_mark");
-                            event.targets[1].addMark("天照_mark");
-                            event.targets[1].addSkill("天照_mark");
                         },
                         "_priority": 0,
                     },
@@ -446,7 +473,7 @@ export default function () {
                     "月读": "月读",
                     "月读_info": "每回合限一次，你可以指定一名其他角色，与其同时展示一张牌，若你和他展示的牌颜色一致，你使其获得【读】状态（非锁定技失效且不能使用或打出牌），直到回合结束",
                     "加具土命": "加具土命",
-                    "加具土命_info": "你使用的火杀无距离限制；出牌阶段，你可以弃一张牌，移动场上一枚【照】标记的位置",
+                    "加具土命_info": "你使用的火杀无距离限制；出牌阶段，你可以弃一张牌，移动场上一枚【照】标记的位置：其他角色死亡时，若其拥有【照】标记，你可选择弃一张牌，移动其中一枚【照】标记的位置",
                     "千鸟": "千鸟",
                     "千鸟_info": "每回合限一次，你可令一名其他角色展示一张手牌，若你交给其一张颜色不同的手牌，你对其造成一点雷伤，并弃置其防具",
                     "矢量偏转": "矢量偏转",
