@@ -298,8 +298,8 @@ export default function () {
                                 trigger: {
                                     global: "die",
                                 },
-                                filterTarget(card, player, target) {
-                                    return target.hasMark("天照_mark") && player.countCards("hes") > 0;
+                                filter(event, player) {
+                                    return event.player.hasMark("天照_mark") && player.countCards("hes") > 0;
                                 },
                                 async cost(event, trigger, player) {
                                     event.result = await player
