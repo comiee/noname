@@ -160,7 +160,7 @@ export default function () {
                                     for (let i = 0; i < player.countMark('天照_mark'); i++) {
                                         await player.judge(card => {
                                             if (get.color(card) === 'black') {
-                                                player.damage('fire');
+                                                player.damage('fire', 'nosource', 'nocard');
                                             }
                                         });
                                     }
