@@ -2,18 +2,19 @@ import { lib, game, ui, get, ai, _status } from "../../noname.js";
 export const type = "extension";
 export default function(){
 	return {name:"无敌",content:function (config,pack){
-    
+
 },precontent:function (){
-    
+
 },help:{},config:{},package:{
     character: {
         character: {
             "一人之下": ["female","shen",4,["后发先至","羽化成仙","连锁反应"],["boss","forbidai","bossallowed","ext:无敌/一人之下.jpg","die:ext:无敌/audio/die/一人之下.mp3"]],
             "万人之上": ["female","shen",16,["连锁反应","上帝视角","施舍给你","完全支配","侵蚀本源","模仿学习","我不能死"],["boss","forbidai","bossallowed","ext:无敌/万人之上.jpg","die:ext:无敌/audio/die/万人之上.mp3"]],
             "幻化无穷": ["female","shen",8,["千变万化","我不能死"],["boss","forbidai","bossallowed","ext:无敌/幻化无穷.jpg","die:ext:无敌/audio/die/幻化无穷.mp3"]],
-            "天下无敌": ["female","shen",1,["wusheng","万寿无疆","以牙还牙"],["boss","forbidai","bossallowed","ext:无敌/天下无敌.jpg","die:ext:无敌/audio/die/天下无敌.mp3"]],
+            "天下无敌": ["female","shen",1,["买一送一","万寿无疆","以牙还牙"],["boss","forbidai","bossallowed","ext:无敌/天下无敌.jpg","die:ext:无敌/audio/die/天下无敌.mp3"]],
             "以和为贵": ["female","shen",2,["人畜无害","崩坏世界","不死之身"],["boss","forbidai","bossallowed","ext:无敌/以和为贵.jpg","die:ext:无敌/audio/die/以和为贵.mp3"]],
             "绝处逢生": ["female","shen",32,["放弃治疗","以牙还牙"],["boss","forbidai","bossallowed","ext:无敌/绝处逢生.jpg","die:ext:无敌/audio/die/绝处逢生.mp3"]],
+            "多多益善": ["female","shen",6,["同甘共苦","举一反三","买一送一","起死回生"],["boss","forbidai","bossallowed","ext:无敌/多多益善.jpg","die:ext:无敌/audio/die/多多益善.mp3"]],
         },
         translate: {
             "一人之下": "一人之下",
@@ -22,6 +23,7 @@ export default function(){
             "天下无敌": "天下无敌",
             "以和为贵": "以和为贵",
             "绝处逢生": "绝处逢生",
+            "多多益善": "多多益善",
             "无敌": "无敌",
         },
     },
@@ -215,7 +217,7 @@ export default function(){
                     event.dialog=ui.create.dialog(judgestr);
                     event.dialog.classList.add('center');
                     event.dialog.videoId=event.videoId;
-            
+
                     game.addVideo('judge1',player,[get.cardInfo(card),judgestr,event.videoId]);
                     for(var i=0;i<event.cards.length;i++) event.cards[i].discard();
                     // var node=card.copy('thrown','center',ui.arena).animate('start');
@@ -300,15 +302,12 @@ export default function(){
             "我不能死": {
                 skillAnimation: true,
                 trigger: {
-                    player: "changeHp",
+                    player: "dieBegin",
                 },
                 unique: true,
-                filter: function (event,player){
-                    return player.hp<=1;
-                },
-                forced: true,
                 priority: 3,
                 content: function (){
+					trigger.cancel();
                     if(player.maxHp>3)player.loseMaxHp(player.maxHp-3);
                     else player.gainMaxHp(3-player.maxHp);
                     player.hp=3;
@@ -468,6 +467,112 @@ export default function(){
                 },
                 "_priority": 0,
             },
+            "同甘共苦": {
+                group: ["同甘共苦_1", "同甘共苦_2"],
+                subSkill: {
+                    "1": {
+                        frequent: true,
+                        trigger: {
+                            global: "recoverAfter",
+                        },
+                        filter: function (event, player){
+                            return event.player !== player;
+                        },
+                        content: function (event, trigger, player){
+                            player.recover();
+                        },
+                    },
+                    "2": {
+                        frequent: true,
+                        trigger: {
+                            global: "gainAfter",
+                        },
+                        filter: function (event, player){
+                            if (event.parent.parent.name === "phaseDraw") {
+                                return false;
+                            }
+                            return event.player !== player;
+                        },
+                        content: function (event, trigger, player){
+                            player.draw();
+                        }
+                    },
+                },
+                "_priority": 0,
+            },
+            "举一反三": {
+                frequent: true,
+                trigger: {
+                    player: "loseAfter",
+                },
+                filter: function (event,player){
+                    return _status.currentPhase !== player;
+                },
+                content: function (event, trigger, player){
+                    player.draw(3);
+                },
+                "_priority": 0,
+            },
+            "买一送一": {
+                frequent: true,
+                enable: "phaseUse",
+                filter(event, player) {
+                    return player.storage["买一送一_mark"];
+                },
+                async content(event, trigger, player){
+                    let result = await player
+                        .chooseToDiscard("h", "弃一张牌，视为使用一张" + get.translation(player.storage["买一送一_mark"], player))
+                        .forResult();
+                    if (result.bool) {
+                        await player.chooseUseTarget(true, player.storage["买一送一_mark"]);
+                        player.unmarkSkill("买一送一_mark");
+                        player.storage["买一送一_mark"] = undefined;
+                    }
+                },
+                group: "买一送一_mark",
+                subSkill: {
+                    mark: {
+                        charlotte: true,
+                        trigger: { player: "useCard1" },
+                        forced: true,
+                        popup: false,
+                        firstDo: true,
+                        content() {
+                            player.storage["买一送一_mark"] = trigger.card;
+                            player.markSkill("买一送一_mark");
+                            game.broadcastAll(
+                                function (player, suit) {
+                                    if (player.marks["买一送一_mark"]) {
+                                        player.marks["买一送一_mark"].firstChild.innerHTML = get.translation(suit);
+                                    }
+                                },
+                                player,
+                                get.suit(trigger.card, player)
+                            );
+                        },
+                        intro: {
+                            markcount(card, player) {
+                                return get.strNumber(get.number(card, player));
+                            },
+                            content(card, player) {
+                                return '上一张使用的牌：' + get.translation(get.name(card, player));
+                            },
+                        },
+                    },
+                },
+                "_priority": 0,
+            },
+            "起死回生": {
+                enable: ["chooseToUse", "chooseToRespond"],
+                viewAsFilter(player) {
+                    return player.countCards("hes") > 0;
+                },
+                filterCard: true,
+                position: "hes",
+                viewAs: { name: "tao" },
+                prompt: "将一张牌当桃使用",
+                "_priority": 0,
+            },
         },
         translate: {
             "无伤定律": "无伤定律",
@@ -489,7 +594,7 @@ export default function(){
             "完全支配": "完全支配",
             "完全支配_info": "出牌阶段限一次，你可以指定任意一名角色，然后选择一项发动：1.获得该角色任意区域的一些牌；2.让该角色翻面；3.让该角色失去非锁定技并无法使用或打出手牌，直到回合结束；4.让该角色进入混乱状态，直到其下回合结束。",
             "我不能死": "我不能死",
-            "我不能死_info": "锁定技，觉醒技，当你体力值不大于1时，你立即将体力上限改为3，并回满体力，然后获得技能“无伤定律”“改命”。",
+            "我不能死_info": "觉醒技，当你濒死时，你将体力上限改为3，并回满体力，然后获得技能“无伤定律”“改命”。",
             "千变万化": "千变万化",
             "千变万化_info": "每轮游戏开始时，你随机获得一个非boss角色的所有技能，并将其中的锁定技改为非锁定技。然后你回复X点体力（X为场上存活角色数减去你获得技能的角色数，且不小于0）。",
             "不死之身": "不死之身",
@@ -508,6 +613,14 @@ export default function(){
             "以牙还牙_info": "当你受到其他角色的伤害后，你可以令伤害来源受到等量的伤害。",
             "万寿无疆": "万寿无疆",
             "万寿无疆_info": "锁定技，你的体力为无穷。",
+            "同甘共苦": "同甘共苦",
+            "同甘共苦_info": "其他角色回复体力时，你回复一点体力；其他角色在摸牌阶段以外获得牌时，你摸一张牌。",
+            "举一反三": "举一反三",
+            "举一反三_info": "当你于回合外失去牌时，你摸三张牌。",
+            "买一送一": "买一送一",
+            "买一送一_info": "你可弃一张牌，视为使用上一张使用的牌（以此法使用的牌除外）。",
+            "起死回生": "起死回生",
+            "起死回生_info": "你可以将任意牌当桃使用或打出。",
         },
     },
     intro: "",
@@ -515,5 +628,5 @@ export default function(){
     diskURL: "",
     forumURL: "",
     version: "1.0",
-},files:{"character":["一人之下.jpg","天下无敌.jpg","以和为贵.jpg","绝处逢生.jpg","万人之上.jpg","幻化无穷.jpg"],"card":[],"skill":[],"audio":[]},connect:false} 
+},files:{"character":["一人之下.jpg","天下无敌.jpg","以和为贵.jpg","绝处逢生.jpg","万人之上.jpg","幻化无穷.jpg","多多益善.jpg"],"card":[],"skill":[],"audio":[]},connect:false}
 };
