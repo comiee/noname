@@ -485,10 +485,10 @@ export default function(){
                     "2": {
                         frequent: true,
                         trigger: {
-                            global: "gainAfter",
+                            global: "drawAfter",
                         },
                         filter: function (event, player){
-                            if (event.parent.parent.name === "phaseDraw") {
+                            if (event.parent.name === "phaseDraw") {
                                 return false;
                             }
                             return event.player !== player;
@@ -521,7 +521,7 @@ export default function(){
                 },
                 async content(event, trigger, player){
                     let result = await player
-                        .chooseToDiscard("h", "弃一张牌，视为使用一张" + get.translation(player.storage["买一送一_mark"], player))
+                        .chooseToDiscard("h", "弃一张手牌，视为使用一张" + get.translation(player.storage["买一送一_mark"], player))
                         .forResult();
                     if (result.bool) {
                         await player.chooseUseTarget(true, player.storage["买一送一_mark"]);
@@ -614,11 +614,11 @@ export default function(){
             "万寿无疆": "万寿无疆",
             "万寿无疆_info": "锁定技，你的体力为无穷。",
             "同甘共苦": "同甘共苦",
-            "同甘共苦_info": "其他角色回复体力时，你回复一点体力；其他角色在摸牌阶段以外获得牌时，你摸一张牌。",
+            "同甘共苦_info": "其他角色回复体力时，你回复一点体力；其他角色在摸牌阶段以外摸牌时，你摸一张牌。",
             "举一反三": "举一反三",
             "举一反三_info": "当你于回合外失去牌时，你摸三张牌。",
             "买一送一": "买一送一",
-            "买一送一_info": "你可弃一张牌，视为使用上一张使用的牌（以此法使用的牌除外）。",
+            "买一送一_info": "你可弃一张手牌，视为使用上一张使用的牌（以此法使用的牌除外）。",
             "起死回生": "起死回生",
             "起死回生_info": "你可以将任意牌当桃使用或打出。",
         },
