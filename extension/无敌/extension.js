@@ -506,7 +506,19 @@ export default function(){
                     player: "loseAfter",
                 },
                 filter: function (event,player){
-                    return _status.currentPhase !== player;
+                    if (_status.currentPhase === player){
+                        return false;
+                    }
+                    const evt = event.getl(player);
+                    if (!evt || evt.player !== player) {
+                        return false;
+                    }
+                    for (let k of ['hs', 'es', 'ss']) {
+                        if (evt[k] && evt[k].length > 0) {
+                            return true;
+                        }
+                    }
+                    return false;
                 },
                 content: function (event, trigger, player){
                     player.draw(3);
