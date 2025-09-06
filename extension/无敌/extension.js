@@ -10,7 +10,7 @@ export default function(){
         character: {
             "一人之下": ["female","shen",4,["后发先至","羽化成仙","连锁反应"],["boss","forbidai","bossallowed","ext:无敌/一人之下.jpg","die:ext:无敌/audio/die/一人之下.mp3"]],
             "万人之上": ["female","shen",16,["连锁反应","上帝视角","施舍给你","完全支配","侵蚀本源","模仿学习","我不能死"],["boss","forbidai","bossallowed","ext:无敌/万人之上.jpg","die:ext:无敌/audio/die/万人之上.mp3"]],
-            "幻化无穷": ["female","shen",8,["千变万化","我不能死"],["boss","forbidai","bossallowed","ext:无敌/幻化无穷.jpg","die:ext:无敌/audio/die/幻化无穷.mp3"]],
+            "幻化无穷": ["female","shen",8,["千变万化","等价交换","我不能死"],["boss","forbidai","bossallowed","ext:无敌/幻化无穷.jpg","die:ext:无敌/audio/die/幻化无穷.mp3"]],
             "天下无敌": ["female","shen",1,["买一送一","万寿无疆","以牙还牙"],["boss","forbidai","bossallowed","ext:无敌/天下无敌.jpg","die:ext:无敌/audio/die/天下无敌.mp3"]],
             "以和为贵": ["female","shen",2,["人畜无害","崩坏世界","不死之身"],["boss","forbidai","bossallowed","ext:无敌/以和为贵.jpg","die:ext:无敌/audio/die/以和为贵.mp3"]],
             "绝处逢生": ["female","shen",32,["放弃治疗","以牙还牙"],["boss","forbidai","bossallowed","ext:无敌/绝处逢生.jpg","die:ext:无敌/audio/die/绝处逢生.mp3"]],
@@ -335,7 +335,7 @@ export default function(){
                     var list=[];
                     for(var i in lib.character){
                         //if(lib.character[i][4].contains('boss')) continue;
-                        if(player.storage.千变万化.contains(i)) continue;
+                        if(player.storage.千变万化.includes(i)) continue;
                         list.push(i);
                     }
                     var name=list.randomGet();
@@ -352,6 +352,34 @@ export default function(){
                     'step 1'
                     event.dialog.close();
                     player.recover(game.players.length-player.storage.千变万化.length);
+                },
+                "_priority": 0,
+            },
+            "等价交换": {
+                enable: "phaseUse",
+                usable: 1,
+                filterTarget(card, player, target) {
+                    return player !== target;
+                },
+                async content(event, trigger, player){
+                    console.log(event, trigger, player);
+                    let skills1 = player.getSkills(null, false, false)
+                        .filter(skill => skill !== "等价交换");
+                    let result1 = await player
+                        .chooseButton(["请选择令自己失去的技能", [skills1, "skill"]])
+                        .forResult();
+                    if (!result1.bool) {
+                        return;
+                    }
+                    let skills2 = event.target.getSkills(null, false, false);
+                    let result2 = await player
+                        .chooseButton(["请选择令对方失去的技能", [skills2, "skill"]])
+                        .forResult();
+                    if (!result2.bool) {
+                        return;
+                    }
+                    await player.removeSkill(result1.links[0]);
+                    await event.target.removeSkill(result2.links[0]);
                 },
                 "_priority": 0,
             },
@@ -609,6 +637,8 @@ export default function(){
             "我不能死_info": "觉醒技，当你濒死时，你将体力上限改为3，并回满体力，然后获得技能“无伤定律”“改命”。",
             "千变万化": "千变万化",
             "千变万化_info": "每轮游戏开始时，你随机获得一个非boss角色的所有技能，并将其中的锁定技改为非锁定技。然后你回复X点体力（X为场上存活角色数减去你获得技能的角色数，且不小于0）。",
+            "等价交换": "等价交换",
+            "等价交换_info": "出牌阶段限一次，你可以选择失去一个技能，使一名其他角色也失去一个技能",
             "不死之身": "不死之身",
             "不死之身_info": "当你濒死时，你可以加一点体力上限，然后回满体力。",
             "崩坏世界": "崩坏世界",
