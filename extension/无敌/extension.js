@@ -334,7 +334,8 @@ export default function(){
                     player.logSkill('千变万化');
                     var list=[];
                     for(var i in lib.character){
-                        //if(lib.character[i][4].contains('boss')) continue;
+                        if(lib.character[i][1]==='shen') continue;
+                        if(lib.character[i][4].includes('boss')) continue;
                         if(player.storage.千变万化.includes(i)) continue;
                         list.push(i);
                     }
