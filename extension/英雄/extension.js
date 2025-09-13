@@ -158,11 +158,15 @@ export default function () {
                                 },
                                 async content(event, trigger, player) {
                                     for (let i = 0; i < player.countMark('天照_mark'); i++) {
-                                        await player.judge(card => {
+                                        const result = await player.judge(card => {
                                             if (get.color(card) === 'black') {
-                                                player.damage('fire', 'nosource', 'nocard');
+                                                return 1;
                                             }
-                                        });
+                                            return 0;
+                                        }).forResult();
+                                        if (result.bool) {
+                                            player.damage('fire', 'nosource', 'nocard');
+                                        }
                                     }
                                 },
                                 sub: true,
