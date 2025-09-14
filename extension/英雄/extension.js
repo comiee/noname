@@ -164,7 +164,7 @@ export default function () {
                                             }
                                             return 0;
                                         }).forResult();
-                                        if (result.bool) {
+                                        if (result && result.bool) {
                                             player.damage('fire', 'nosource', 'nocard');
                                         }
                                     }
