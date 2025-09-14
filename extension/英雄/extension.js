@@ -15,12 +15,12 @@ export default function () {
         package: {
             character: {
                 character: {
-                    "巴泽特": ["female", "qun", 4, ["逆光", "格斗", "longdan"], ["ext:英雄/巴泽特.jpg", "die:ext:英雄/audio/die/巴泽特.mp3"]],
+                    "巴泽特": ["female", "qun", 5, ["逆光", "格斗", "longdan"], ["ext:英雄/巴泽特.jpg", "die:ext:英雄/audio/die/巴泽特.mp3"]],
                     "一方通行": {
                         sex: "male",
                         group: "qun",
-                        hp: 3,
-                        maxHp: 3,
+                        hp: 4,
+                        maxHp: 4,
                         hujia: 0,
                         skills: ["矢量偏转", "一方通行"],
                         img: "extension/英雄/一方通行.jpg",
@@ -29,8 +29,8 @@ export default function () {
                     "宇智波鼬": {
                         sex: "male",
                         group: "qun",
-                        hp: 3,
-                        maxHp: 3,
+                        hp: 4,
+                        maxHp: 4,
                         hujia: 0,
                         skills: ["天照", "火遁", "月读"],
                         img: "extension/英雄/宇智波鼬.jpg",
@@ -39,8 +39,8 @@ export default function () {
                     "宇智波佐助": {
                         sex: "male",
                         group: "qun",
-                        hp: 3,
-                        maxHp: 3,
+                        hp: 4,
+                        maxHp: 4,
                         hujia: 0,
                         skills: ["天照", "加具土命", "千鸟"],
                         img: "extension/英雄/宇智波佐助.jpg",
